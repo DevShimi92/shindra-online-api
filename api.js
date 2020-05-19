@@ -2,12 +2,8 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require("body-parser"); 
-
-
 var log4js = require('log4js');
 
-//var log = log4js.getLogger();
-//log.level = 'debug';
 log4js.configure({
       appenders: {
         everything: { type: 'file', filename: 'logs/all-the-logs.log' },
@@ -68,8 +64,8 @@ var conMysql = mysql.createConnection({
 myRouter.route('/')
 // all permet de prendre en charge toutes les méthodes. 
 .all(function(req,res){ 
-      log.info('Ping d api');
-      res.status(200).json({message : "Shindra-Online-API "});
+      log.info("Ping sur l'api");
+      res.status(200).json({message : "Shindra-Online-API"});
       res.end();
 });
  
@@ -77,7 +73,7 @@ myRouter.route('/signup') //Création d'un nouveau compte
 //POST
 .post(function(req,res){
       log.info("Ajout d'un compte...");
-      if (req.body.lastname == null || req.body.name == null || req.body.identifiant == null || req.body.mdp == null || req.body.mail == null ) // Si il manque un champ, on renvoi bad request
+      if (req.body.lastname == null || req.body.name == null || req.body.username == null || req.body.mdp == null || req.body.mail == null ) // Si il manque un champ, on renvoi bad request
       {
             res.status(400).json({error : 'Missing Resources'});
             res.end();
@@ -92,7 +88,7 @@ myRouter.route('/signup') //Création d'un nouveau compte
                               log.error("Echec de création de compte : Compte déja exsitant");      
                         }
                   else{
-                              conMysql.query("SELECT identifiant from account Where identifiant = '"+req.body.identifiant+"'", function(err, rows) { 
+                              conMysql.query("SELECT username from account Where username = '"+req.body.username+"'", function(err, rows) { 
                                     if(rows.length > 0 )
                                     {
                                           res.status(400).json({error : 'Account already exist'});
@@ -101,8 +97,8 @@ myRouter.route('/signup') //Création d'un nouveau compte
                                     }
                                     else
                                     {
-                                          var sql = "INSERT INTO account (identifiant, lastname,name,mail,mdp) VALUES ( ? )" ;
-                                          var values = [req.body.identifiant, req.body.lastname, req.body.name, req.body.mail, req.body.mdp ];
+                                          var sql = "INSERT INTO account (username, lastname,name,mail,mdp) VALUES ( ? )" ;
+                                          var values = [req.body.username, req.body.lastname, req.body.name, req.body.mail, req.body.mdp ];
                                           conMysql.query(sql, [values], function (err, result) {
                                                 if (err)
                                                       { 
@@ -133,19 +129,19 @@ myRouter.route('/signin')
 .post(function(req,res){
       log.info("Tentative d'identification...");
 
-      if (req.body.mail == null || req.body.mdp == null ) // Si il manque un champ, on renvoi bad request
+      if (req.body.username == null || req.body.mdp == null ) // Si il manque un champ, on renvoi bad request
       {
             res.status(400).json({error : 'Incomplete login'});
             res.end();
-            log.error("Echec d'identification : Champs manquant");     4
+            log.error("Echec d'identification : Champs manquant");     
             log.error(req.body);
       }
       else
       {
-            conMysql.query("SELECT identifiant,mail,mdp from account Where mail = '"+req.body.mail+"'", function(err, rows) { 
+            conMysql.query("SELECT username,mail,mdp from account Where username = '"+req.body.username+"'", function(err, rows) { 
                   if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
                         {
-                              res.status(400).json({error : 'The account does not exist'});
+                              res.status(400).json({ error : "The account does not exist" });
                               res.end();
                               log.error("Echec d'identification : Le compte n'exsite pas");      
                         }
@@ -155,7 +151,7 @@ myRouter.route('/signin')
                         {
                               res.status(200).json({token : ''});
                               res.end();
-                              log.info("Identification réussi pour le compte suivant  : "+ rows[0].identifiant); 
+                              log.info("Identification réussi pour le compte suivant  : "+ rows[0].username); 
                         }
                         else // Si les identifiant ne sont pas correct , on renvoi bad request
                         {
@@ -186,7 +182,7 @@ myRouter.route('/forgotpassword')
             conMysql.query("SELECT * from account Where mail = '"+req.body.mail+"'", function(err, rows) { 
                   if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
                         {
-                              res.status(400).json({error : 'The account does not exist'});
+                              res.status(400).json({ error : " The account does not exist "});
                               res.end();
                               log.error("Echec de rest de mot de passse : Le compte n'exsite pas");      
                         }
@@ -198,7 +194,7 @@ myRouter.route('/forgotpassword')
                                     { log.error(err); }
                               res.status(200);
                               res.end();
-                              log.info("Réinitialisation de mot de passe pour le compte "+rows[0].identifiant+" associé au mail "+rows[0].mail+" réussi");
+                              log.info("Réinitialisation de mot de passe pour le compte "+rows[0].username+" associé au mail "+rows[0].mail+" réussi");
                               });
                         }
             });
