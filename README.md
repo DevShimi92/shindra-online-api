@@ -1,2 +1,1 @@
-# shindra-online-api
-shindra-online-api
+# Shindra online [ API ]
