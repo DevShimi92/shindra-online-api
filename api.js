@@ -172,14 +172,14 @@ myRouter.route('/forgotpassword')
 //PUT
 .put(function(req,res){
       log.info("Demande de rest de mot de passe...");
-      if (req.body.mail == null ) // Si il manque un champ, on renvoi bad request
+      if (req.body.email == null ) // Si il manque un champ, on renvoi bad request
       {
             res.status(400).json({error : 'Missing Resources'});
             res.end();
             log.error("Echec de rest de mot de passse : Champs manquant");      }
       else
       {
-            conMysql.query("SELECT * from account Where mail = '"+req.body.mail+"'", function(err, rows) { 
+            conMysql.query("SELECT * from account Where mail = '"+req.body.email+"'", function(err, rows) { 
                   if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
                         {
                               res.status(400).json({ error : " The account does not exist "});
@@ -188,11 +188,11 @@ myRouter.route('/forgotpassword')
                         }
                   else 
                         {
-                              var sql = "UPDATE account SET mdp = '"+'rest'+"' WHERE mail = '"+req.body.mail+"'";
+                              var sql = "UPDATE account SET mdp = '"+'rest'+"' WHERE mail = '"+req.body.email+"'";
                               conMysql.query(sql, function (err, result) {
                                     if (err)
                                     { log.error(err); }
-                              res.status(200);
+                              res.status(200).json({error : ''});
                               res.end();
                               log.info("Réinitialisation de mot de passe pour le compte "+rows[0].username+" associé au mail "+rows[0].mail+" réussi");
                               });
@@ -208,3 +208,36 @@ app.use(myRouter);
 app.listen(port, hostname, function(){
 	log.info("Mon serveur fonctionne sur http://"+ hostname +":"+port); 
 });
+
+
+
+
+
+/*
+myRouter.route('/account')
+// J'implémente les méthodes GET, PUT, UPDATE et DELETE
+// GET
+.get(function(req,res){ 
+      conMysql.query('SELECT * from account', function(err, rows, fields) {
+            conMysql.end();
+              if (!err)
+                console.log('The solution is: ', rows);
+              else
+                console.log('Error while performing Query.');
+              });
+
+})
+//POST
+.post(function(req,res){
+      res.json({message : "Ajoute une nouvelle piscine à la liste", methode : req.method});
+})
+//PUT
+.put(function(req,res){ 
+      res.json({message : "Mise à jour des informations 'une piscine dans la liste", methode : req.method});
+})
+//DELETE
+.delete(function(req,res){ 
+res.json({message : "Suppression d'une piscine dans la liste", methode : req.method});  
+}); 
+ */
+
