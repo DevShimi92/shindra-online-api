@@ -73,14 +73,14 @@ myRouter.route('/signup') //Création d'un nouveau compte
 //POST
 .post(function(req,res){
       log.info("Ajout d'un compte...");
-      if (req.body.lastname == null || req.body.name == null || req.body.username == null || req.body.mdp == null || req.body.mail == null ) // Si il manque un champ, on renvoi bad request
+      if (req.body.lastname == null || req.body.firstname == null || req.body.username == null || req.body.password == null || req.body.email == null ) // Si il manque un champ, on renvoi bad request
       {
             res.status(400).json({error : 'Missing Resources'});
             res.end();
             log.error("Echec de création de compte : Champs manquant");      }
       else
       {
-            conMysql.query("SELECT mail from account Where mail = '"+req.body.mail+"'", function(err, rows) { 
+            conMysql.query("SELECT mail from account Where mail = '"+req.body.email+"'", function(err, rows) { 
                   if(rows.length > 0 ) // Si le compte est déja existant, on renvoi bad request
                         {
                               res.status(400).json({error : 'Account already exist'});
@@ -98,7 +98,7 @@ myRouter.route('/signup') //Création d'un nouveau compte
                                     else
                                     {
                                           var sql = "INSERT INTO account (username, lastname,name,mail,mdp) VALUES ( ? )" ;
-                                          var values = [req.body.username, req.body.lastname, req.body.name, req.body.mail, req.body.mdp ];
+                                          var values = [req.body.username, req.body.lastname, req.body.firstname, req.body.email, req.body.password ];
                                           conMysql.query(sql, [values], function (err, result) {
                                                 if (err)
                                                       { 
@@ -106,8 +106,8 @@ myRouter.route('/signup') //Création d'un nouveau compte
                                                       }
                                                 else
                                                       {
-                                                            log.info("Nouveau compte créer pour le mail : "+ req.body.mail );
-                                                            res.status(200);
+                                                            log.info("Nouveau compte créer pour le email : "+ req.body.email );
+                                                            res.status(200).json({error : ''});
                                                             res.end();
                                                       }
                                           });
