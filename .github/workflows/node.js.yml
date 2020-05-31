@@ -36,7 +36,7 @@ jobs:
     - name: Verify Mysql connection
       env:
         PORT: ${{ job.services.mariadb.ports[3306] }}
-        run: |
+    - run: |
           while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
             sleep 1
           done
