@@ -4,7 +4,8 @@
   "description": "Serveur du jeu Shindra Online",
   "main": "serveur.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node api.js",
+    "test": "mocha --exit"
   },
   "author": "",
   "license": "ISC",
@@ -14,5 +15,8 @@
     "log4js": "^6.2.1",
     "mysql": "^2.18.1",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "supertest": "^4.0.2"
   }
 }

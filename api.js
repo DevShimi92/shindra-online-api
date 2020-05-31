@@ -1,8 +1,9 @@
 var express = require('express');
 var app = express();
-var mysql = require('mysql');
 var bodyParser = require("body-parser"); 
 var log4js = require('log4js');
+
+const configJSON = require('./config.js');
 
 log4js.configure({
       appenders: {
@@ -20,6 +21,9 @@ log4js.configure({
     });
     var log = log4js.getLogger('API');
 
+    var constructorSQL = require("./db.js");
+    var conMysql ;
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -28,36 +32,9 @@ app.use(bodyParser.json());
 //C'est à partir de cet objet myRouter, que nous allons implémenter les méthodes. 
 var myRouter = express.Router(); 
 
-const fs = require('fs');
-// On charge le fichier de config
-let rawdata = fs.readFileSync('config.json');
-let configJSON = JSON.parse(rawdata);
 
 var hostname = configJSON.address; 
 var port = configJSON.port; 
-
-
-
-var conMysql = mysql.createConnection({
-      host: configJSON.mysql.address,
-      user: configJSON.mysql.username,
-      password: configJSON.mysql.password,
-      database: configJSON.mysql.database
-    });
-    
-    conMysql.connect(function(err) {
-      if (err)
-            { 
-                  log.error(err); 
-                  process.exit(2);
-            }
-      else
-            {
-                  log.info("Connected to database !");
-
-            }
-    });
-
 
 
 
@@ -77,51 +54,35 @@ myRouter.route('/signup') //Création d'un nouveau compte
       {
             res.status(400).json({error : 'Missing Resources'});
             res.end();
-            log.error("Echec de création de compte : Champs manquant");      }
+            log.error("Echec de création de compte : Champs manquant");      
+      }
       else
       {
-            conMysql.query("SELECT mail from account Where mail = '"+req.body.email+"'", function(err, rows) { 
-                  if(rows.length > 0 ) // Si le compte est déja existant, on renvoi bad request
+            constructorSQL.signUp(conMysql,req.body.lastname,req.body.firstname,req.body.email,req.body.username,req.body.password, function(value) {
+                  if(value == 'ERROR_EMAIL_ALREADY_EXISTS' ) 
                         {
                               res.status(400).json({error : 'Account already exist'});
                               res.end();
-                              log.error("Echec de création de compte : Compte déja exsitant");      
+                        }      
+                  else if (value == 'ERROR_USERNAME_ALREADY_EXISTS' ) 
+                        {
+                              res.status(400).json({error : 'Account already exist'});
+                              res.end();    
                         }
-                  else{
-                              conMysql.query("SELECT username from account Where username = '"+req.body.username+"'", function(err, rows) { 
-                                    if(rows.length > 0 )
-                                    {
-                                          res.status(400).json({error : 'Account already exist'});
-                                          res.end();
-                                          log.error("Echec de création de compte : Compte déja exsitant");    
-                                    }
-                                    else
-                                    {
-                                          var sql = "INSERT INTO account (username, lastname,name,mail,mdp) VALUES ( ? )" ;
-                                          var values = [req.body.username, req.body.lastname, req.body.firstname, req.body.email, req.body.password ];
-                                          conMysql.query(sql, [values], function (err, result) {
-                                                if (err)
-                                                      { 
-                                                            log.error(err); 
-                                                      }
-                                                else
-                                                      {
-                                                            log.info("Nouveau compte créer pour le email : "+ req.body.email );
-                                                            res.status(200).json({error : ''});
-                                                            res.end();
-                                                      }
-                                          });
-
-
-                                    }
-                              });
-                        
+                  else if (value == 'ERROR' ) 
+                        {
+                              res.status(400).json({error : 'ERROR'});
+                              res.end();    
                         }
+                  else    
+                        {
+                              res.status(200).json({token : ''});
+                              res.end();
+                        }               
 
-                  if (err)
-                  { log.error(err); }
-                    });
-      }})
+                });
+      }
+});
 
 
 myRouter.route('/signin')
@@ -129,7 +90,7 @@ myRouter.route('/signin')
 .post(function(req,res){
       log.info("Tentative d'identification...");
 
-      if (req.body.username == null || req.body.mdp == null ) // Si il manque un champ, on renvoi bad request
+      if (req.body.username == null || req.body.password == null ) // Si il manque un champ, on renvoi bad request
       {
             res.status(400).json({error : 'Incomplete login'});
             res.end();
@@ -138,30 +99,24 @@ myRouter.route('/signin')
       }
       else
       {
-            conMysql.query("SELECT username,mail,mdp from account Where username = '"+req.body.username+"'", function(err, rows) { 
-                  if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
+            constructorSQL.signIn(conMysql,req.body.username,req.body.password, function(value) {
+                  if(value == 'ERRORNOTFOUND' ) // Si le compte n'existe pas, on renvoi bad request
                         {
                               res.status(400).json({ error : "The account does not exist" });
-                              res.end();
-                              log.error("Echec d'identification : Le compte n'exsite pas");      
-                        }
-                  else      
-                  {
-                        if ( rows[0].mdp == req.body.mdp) // Si les identifiant sont correct , on envoi le tokenn
+                              res.end(); 
+                        }      
+                  else if (value == 'ERROR' ) // Si les identifiant ne sont pas correct , on renvoi bad request
                         {
-                              res.status(200).json({token : ''});
-                              res.end();
-                              log.info("Identification réussi pour le compte suivant  : "+ rows[0].username); 
+                                    res.status(400).json({error : 'ERROR'});
+                                    res.end();    
                         }
-                        else // Si les identifiant ne sont pas correct , on renvoi bad request
+                  else     // Si les identifiant sont correct , on envoi le tokenn
                         {
-                              res.status(400).json({error : 'Login incorrect'});
-                              res.end();
-                              log.error("Echec d'identification : Identifiant incorrect");    
-                        }
-                  }
-                  
-                  });
+                                    res.status(200).json({token : ''});
+                                    res.end();
+                        }               
+
+            });
       }
 
 
@@ -179,65 +134,41 @@ myRouter.route('/forgotpassword')
             log.error("Echec de rest de mot de passse : Champs manquant");      }
       else
       {
-            conMysql.query("SELECT * from account Where mail = '"+req.body.email+"'", function(err, rows) { 
-                  if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
+            
+            constructorSQL.forgotpassword(conMysql,req.body.email, function(value) {
+                  if(value == 'ERRORNOTFOUND' ) // Si le compte n'existe pas, on renvoi bad request
                         {
-                              res.status(400).json({ error : " The account does not exist "});
-                              res.end();
-                              log.error("Echec de rest de mot de passse : Le compte n'exsite pas");      
-                        }
-                  else 
+                              res.status(400).json({ error : "The account does not exist" });
+                              res.end(); 
+                        }      
+                  else if (value == 'ERROR' ) // Si les identifiant ne sont pas correct , on renvoi bad request
                         {
-                              var sql = "UPDATE account SET mdp = '"+'rest'+"' WHERE mail = '"+req.body.email+"'";
-                              conMysql.query(sql, function (err, result) {
-                                    if (err)
-                                    { log.error(err); }
-                              res.status(200).json({error : ''});
-                              res.end();
-                              log.info("Réinitialisation de mot de passe pour le compte "+rows[0].username+" associé au mail "+rows[0].mail+" réussi");
-                              });
+                                    res.status(400).json({error : 'Error'});
+                                    res.end();    
                         }
-            });
+                  else     // Si les identifiant sont correct , on envoi le tokenn
+                        {
+                                    res.status(200).json({token : ''});
+                                    res.end();
+                        }               
 
+            });
       }
 
 })
 // Nous demandons à l'application d'utiliser notre routeur
 app.use(myRouter);
 
-app.listen(port, hostname, function(){
-	log.info("Mon serveur fonctionne sur http://"+ hostname +":"+port); 
+const server =  app.listen(port, hostname, function(){
+      log.info("Mon serveur fonctionne sur http://"+ hostname +":"+port); 
+
+
+      constructorSQL.createMysql(configJSON.mysql.address,configJSON.mysql.username,configJSON.mysql.password,configJSON.mysql.database, function(value) {
+            conMysql = value;
+          })
 });
 
+module.exports = server;
+module.exports.configJSON = configJSON;
 
-
-
-
-/*
-myRouter.route('/account')
-// J'implémente les méthodes GET, PUT, UPDATE et DELETE
-// GET
-.get(function(req,res){ 
-      conMysql.query('SELECT * from account', function(err, rows, fields) {
-            conMysql.end();
-              if (!err)
-                console.log('The solution is: ', rows);
-              else
-                console.log('Error while performing Query.');
-              });
-
-})
-//POST
-.post(function(req,res){
-      res.json({message : "Ajoute une nouvelle piscine à la liste", methode : req.method});
-})
-//PUT
-.put(function(req,res){ 
-      res.json({message : "Mise à jour des informations 'une piscine dans la liste", methode : req.method});
-})
-//DELETE
-.delete(function(req,res){ 
-res.json({message : "Suppression d'une piscine dans la liste", methode : req.method});  
-}); 
- */
 
