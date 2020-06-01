@@ -27,4 +27,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm install --global mocha --save
-    - run: mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} 
+    - run: mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}} 
