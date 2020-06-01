@@ -6,6 +6,77 @@ var methodMysql ;
 var conMysql ;
 var username ;
 var password ;
+var MysqlAddress;
+var MysqlUsername;
+var MysqlPassword;
+var MysqlDatabase;
+
+var OtherMysql = false ;
+
+
+process.argv.forEach(function (val, index, array) {
+    if(index == 4)
+    {
+        if(val == '-paramMySQL')
+        {
+            OtherMysql = true ;
+        } 
+
+    }
+
+    if(OtherMysql == true)
+    {
+        if(index == 5)
+        {
+            MysqlAddress = val.substring(1, val.length);
+
+        }
+        else if(index == 6)
+        {
+            MysqlUsername = val.substring(1, val.length);
+        } 
+        else if(index == 7)
+        {
+            MysqlPassword = val.substring(1, val.length);
+        }
+        else if(index == 8)
+        {
+            MysqlDatabase = val.substring(1, val.length);
+        }
+    } 
+   
+        
+    console.log(index + ': ' + val);
+  });
+
+  if (OtherMysql == false)
+  {
+    {
+        console.log(OtherMysql);
+        MysqlAddress  = configJSON.mysql.address;
+        MysqlUsername = configJSON.mysql.username;
+        MysqlPassword = configJSON.mysql.password;
+        MysqlDatabase = configJSON.mysql.database;
+        console.log('3no : '+ MysqlAddress,MysqlUsername,MysqlPassword,MysqlDatabase);
+    }
+  }
+
+
+
+  module.exports.configJSONTest = {
+    "test" : OtherMysql,
+    "address": "localhost",
+    "port"   : "1000",
+     "mysql": {
+         "address"  : MysqlAddress,
+         "username" : MysqlUsername,
+         "password" : MysqlPassword,
+         "database" : MysqlDatabase
+     }
+ };
+
+
+
   
 //==================== Test de l'API  ==================== \\
 
@@ -24,7 +95,7 @@ describe("# Test de l'api", function () {
         
         it("Connexion MySQL - ALL GREEN", function (done) {
             this.timeout(15000); 
-            methodMysql.createMysql(configJSON.mysql.address,configJSON.mysql.username,configJSON.mysql.password,configJSON.mysql.database, function(value) {
+            methodMysql.createMysql(MysqlAddress,MysqlUsername,MysqlPassword,MysqlDatabase, function(value) {
                 if ( value.state == 'connected')
                     {
                         conMysql = value ;
@@ -36,7 +107,7 @@ describe("# Test de l'api", function () {
     
         it("Connexion MySQL - BAD IP 1", function (done) {
             this.timeout(15000); 
-            methodMysql.createMysql('192.168.1.66',configJSON.mysql.username,configJSON.mysql.password,configJSON.mysql.database, function(value) {
+            methodMysql.createMysql('192.168.1.66',MysqlUsername,MysqlPassword,MysqlDatabase, function(value) {
                 if ( value == 'ETIMEDOUT')
                     {
                         done();
@@ -47,7 +118,7 @@ describe("# Test de l'api", function () {
     
         it("Connexion MySQL - BAD IP 2", function (done) {
             this.timeout(15000); 
-            methodMysql.createMysql('192.16.666',configJSON.mysql.username,configJSON.mysql.password,configJSON.mysql.database, function(value) {
+            methodMysql.createMysql('192.16.666',MysqlUsername,MysqlPassword,MysqlDatabase, function(value) {
                 if ( value == 'ENOTFOUND')
                     {
                         done();
@@ -58,7 +129,7 @@ describe("# Test de l'api", function () {
     
         it("Connexion MySQL - BAD USERNAME", function (done) {
             this.timeout(15000); 
-            methodMysql.createMysql(configJSON.mysql.address,'BADUSERNAME',configJSON.mysql.password,configJSON.mysql.database, function(value) {
+            methodMysql.createMysql(MysqlAddress,'BADUSERNAME',MysqlPassword,MysqlDatabase, function(value) {
                 if ( value == 'ER_ACCESS_DENIED_ERROR')
                     {
                         done();
@@ -69,7 +140,7 @@ describe("# Test de l'api", function () {
     
         it("Connexion MySQL - BAD PASSWORD", function (done) {
             this.timeout(15000); 
-            methodMysql.createMysql(configJSON.mysql.address,configJSON.mysql.username,'BADPASSWORD',configJSON.mysql.database, function(value) {
+            methodMysql.createMysql(MysqlAddress,MysqlUsername,'BADPASSWORD',MysqlDatabase, function(value) {
                 if ( value == 'ER_ACCESS_DENIED_ERROR')
                     {
                         done();
@@ -117,6 +188,7 @@ describe("# Test de l'api", function () {
         it("Méthode MySQL - Identification - ALL GRREN", function (done) {
             this.timeout(15000); 
             methodMysql.signIn(conMysql,username,password, function(value) {
+                console.log(value);
                 if(value == 'OK' ) 
                       {
                         done();
@@ -396,7 +468,6 @@ describe("# Test de l'api", function () {
  
 
 });
-
 
 
 

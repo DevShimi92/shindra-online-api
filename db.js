@@ -45,7 +45,7 @@ module.exports = {
 
     signUp: function (conMysql,lastname,firstname,email,username,password, callback) {
         
-      conMysql.query("SELECT mail from account Where mail = '"+email+"'", function(err, rows) { 
+      conMysql.query("SELECT email from account Where email = '"+email+"'", function(err, rows) { 
         if(rows.length > 0 ) // Si le compte est déja existant, on renvoi bad request
               {
                  log.error("Echec de création de compte : Compte déja exsitant !");
@@ -56,13 +56,13 @@ module.exports = {
             conMysql.query("SELECT username from account Where username = '"+username+"'", function(err, rows) { 
                   if(rows.length > 0 )
                         {
-                              log.error("Echec de création de compte : Compte déja exsitant");   
+                              log.error("Echec de création de compte : Compte déja exsitant !");   
                               callback('ERROR_USERNAME_ALREADY_EXISTS');  
                         }
                   else
                         {
-                              var sql = "INSERT INTO account (username, lastname,name,mail,mdp) VALUES ( ? )" ;
-                              var values = [username,lastname,firstname, email,password];
+                              var sql = "INSERT INTO account (username, lastname,name,email,password,restpassword) VALUES ( ? )" ;
+                              var values = [username,lastname,firstname, email,password,0];
                                     conMysql.query(sql, [values], function (err, result) {
                                     if (err)
                                           { 
@@ -88,8 +88,7 @@ module.exports = {
     },
 
     signIn: function (conMysql,username,password, callback) {
-      
-      conMysql.query("SELECT username,mail,mdp from account Where username = '"+username+"'", function(err, rows) { 
+      conMysql.query("SELECT username,email,password from account Where username = '"+username+"'", function(err, rows) { 
         if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
               {
                     log.error("Echec d'identification : Le compte n'exsite pas");   
@@ -97,7 +96,7 @@ module.exports = {
               }
         else      
         {
-              if ( rows[0].mdp == password) // Si les identifiant sont correct , on envoi le tokenn
+              if ( rows[0].password == password) // Si les identifiant sont correct , on envoi le tokenn
               {
                     log.info("Identification réussi pour le compte suivant  : "+ rows[0].username); 
                     callback('OK');
@@ -105,7 +104,7 @@ module.exports = {
               else // Si les identifiant ne sont pas correct , on renvoi bad request
               {
 
-                    log.error("Echec d'identification : Identifiant incorrect");   
+                    log.error("Echec d'identification : Identifiant incorrect !");   
                     callback('ERROR'); 
               }
         }
@@ -116,22 +115,22 @@ module.exports = {
 
   forgotpassword: function (conMysql,email, callback) {
         
-      conMysql.query("SELECT * from account Where mail = '"+email+"'", function(err, rows) { 
+      conMysql.query("SELECT * from account Where email = '"+email+"'", function(err, rows) { 
         if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
               {
-                    log.error("Echec de rest de mot de passse : Le compte n'exsite pas");      
+                    log.error("Echec de rest de mot de passse : Le compte n'exsite pas.");      
                     callback('ERRORNOTFOUND');    
               }
         else      
           {
-              var sql = "UPDATE account SET mdp = '"+'rest'+"' WHERE mail = '"+email+"'";
+              var sql = "UPDATE account SET password = '"+'rest'+"' WHERE email = '"+email+"'";
                 conMysql.query(sql, function (err, result) {
                       if (err)
                       { 
                         log.error(err);
                         callback('ERROR'); 
                       }
-                log.info("Réinitialisation de mot de passe pour le compte "+rows[0].username+" associé au mail "+rows[0].mail+" réussi");
+                log.info("Réinitialisation de mot de passe pour le compte "+rows[0].username+" associé au mail "+rows[0].mail+" réussi !");
                 callback('OK'); 
               });
           }

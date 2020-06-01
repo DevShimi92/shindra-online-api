@@ -4,6 +4,8 @@ var bodyParser = require("body-parser");
 var log4js = require('log4js');
 
 const configJSON = require('./config.js');
+const configJSONTest = require('./test/apitest.js');
+
 
 log4js.configure({
       appenders: {
@@ -162,13 +164,29 @@ app.use(myRouter);
 const server =  app.listen(port, hostname, function(){
       log.info("Mon serveur fonctionne sur http://"+ hostname +":"+port); 
 
+      console.log(configJSONTest.configJSONTest.test)
 
-      constructorSQL.createMysql(configJSON.mysql.address,configJSON.mysql.username,configJSON.mysql.password,configJSON.mysql.database, function(value) {
-            conMysql = value;
-          })
+      if (configJSONTest.configJSONTest.test == true)
+            {
+                  console.log('A');
+                  constructorSQL.createMysql(configJSONTest.configJSONTest.mysql.address,configJSONTest.configJSONTest.mysql.username,configJSONTest.configJSONTest.mysql.password,configJSONTest.configJSONTest.mysql.database, function(value) {
+                        conMysql = value;
+                      })
+
+            }
+      else
+            {
+                  console.log('B');
+                  constructorSQL.createMysql(configJSON.mysql.address,configJSON.mysql.username,configJSON.mysql.password,configJSON.mysql.database, function(value) {
+                        conMysql = value;
+                      })
+
+            }
+
+      
 });
 
-module.exports = server;
+
 module.exports.configJSON = configJSON;
-
-
+module.exports.configJSONTest = configJSONTest;
+module.exports = server;
