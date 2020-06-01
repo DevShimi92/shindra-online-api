@@ -5,8 +5,7 @@
   "main": "serveur.js",
   "scripts": {
     "start": "node api.js",
-    "test": "mocha test/apitest.js --exit",
-    "testGit": "mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} "
+    "test": "mocha test/apitest.js --exit"
   },
   "author": "",
   "license": "ISC",
