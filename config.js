@@ -1,7 +1,7 @@
 module.exports = {
 
-   "address": "",
-   "port"   : "",
+   "address": "localhost",
+   "port"   : "8000",
     "mysql": {
         "address": "",
         "username" : "",
