@@ -104,50 +104,6 @@ describe("# Test de l'api", function () {
                      
               });
         });
-    
-        it("Connexion MySQL - BAD IP 1", function (done) {
-            this.timeout(15000); 
-            methodMysql.createMysql('192.168.1.66',MysqlUsername,MysqlPassword,MysqlDatabase, function(value) {
-                if ( value == 'ETIMEDOUT')
-                    {
-                        done();
-                    }
-                     
-              });
-        });
-    
-        it("Connexion MySQL - BAD IP 2", function (done) {
-            this.timeout(15000); 
-            methodMysql.createMysql('192.16.666',MysqlUsername,MysqlPassword,MysqlDatabase, function(value) {
-                if ( value == 'ENOTFOUND')
-                    {
-                        done();
-                    }
-                     
-              });
-        });
-    
-        it("Connexion MySQL - BAD USERNAME", function (done) {
-            this.timeout(15000); 
-            methodMysql.createMysql(MysqlAddress,'BADUSERNAME',MysqlPassword,MysqlDatabase, function(value) {
-                if ( value == 'ER_ACCESS_DENIED_ERROR')
-                    {
-                        done();
-                    }
-                     
-              });
-        });
-    
-        it("Connexion MySQL - BAD PASSWORD", function (done) {
-            this.timeout(15000); 
-            methodMysql.createMysql(MysqlAddress,MysqlUsername,'BADPASSWORD',MysqlDatabase, function(value) {
-                if ( value == 'ER_ACCESS_DENIED_ERROR')
-                    {
-                        done();
-                    }
-                     
-              });
-        });
 
         it("Méthode MySQL - Inscription - ALL GRREN ", function (done) {
             this.timeout(15000); 
