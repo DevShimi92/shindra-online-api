@@ -3,9 +3,12 @@ var app = express();
 var bodyParser = require("body-parser"); 
 var log4js = require('log4js');
 
-const configJSON = require('./config.js');
-const configJSONTest = require('./test/apitest.js');
+console.log(process.env.NODE_ENV );
 
+if (process.env.NODE_ENV == 'test' )
+      var configJSONTest = require('./test/apitest.js');
+else
+      var configJSON = require('./config.js');
 
 log4js.configure({
       appenders: {
@@ -35,8 +38,17 @@ app.use(bodyParser.json());
 var myRouter = express.Router(); 
 
 
-var hostname = configJSON.address; 
-var port = configJSON.port; 
+if (process.env.NODE_ENV == 'test' )
+            {
+                  var hostname = 'localhost'; 
+                  var port = '3000'; 
+            }
+      else
+            {
+                  var hostname = configJSON.address; 
+                  var port = configJSON.port; 
+            }
+
 
 
 
@@ -161,12 +173,13 @@ myRouter.route('/forgotpassword')
 // Nous demandons à l'application d'utiliser notre routeur
 app.use(myRouter);
 
+
+
+
 const server =  app.listen(port, hostname, function(){
       log.info("Mon serveur fonctionne sur http://"+ hostname +":"+port); 
 
-      console.log(configJSONTest.configJSONTest.test)
-
-      if (configJSONTest.configJSONTest.test == true)
+      if (process.env.NODE_ENV == 'test' )
             {
                   console.log('A');
                   constructorSQL.createMysql(configJSONTest.configJSONTest.mysql.address,configJSONTest.configJSONTest.mysql.username,configJSONTest.configJSONTest.mysql.password,configJSONTest.configJSONTest.mysql.database, function(value) {
@@ -186,7 +199,9 @@ const server =  app.listen(port, hostname, function(){
       
 });
 
+if (process.env.NODE_ENV == 'PRODUCTION' )
+      module.exports.configJSONTest = configJSONTest;
+
 
 module.exports.configJSON = configJSON;
-module.exports.configJSONTest = configJSONTest;
 module.exports = server;
