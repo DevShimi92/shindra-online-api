@@ -1,6 +1,25 @@
 const request = require('supertest');
 const app = require('../api');
-const configJSON = require('../config');
+
+if (process.env.NODE_ENV == 'test' )
+    {
+        var configJSON = {
+            "address": "localhost",
+            "port"   : "3000",
+            "mysql": {
+                "address"  : "",
+                "username" : "",
+                "password" : "",
+                "database" : ""
+            }
+        };
+
+    }
+else
+    {
+        var configJSON = require('../config.js');
+    }
+
 
 var methodMysql ;
 var conMysql ;
