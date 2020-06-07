@@ -1,25 +1,7 @@
 const request = require('supertest');
 const app = require('../api');
-
-if (process.env.NODE_ENV == 'test' )
-    {
-        var configJSON = {
-            "address": "localhost",
-            "port"   : "3000",
-            "mysql": {
-                "address"  : "",
-                "username" : "",
-                "password" : "",
-                "database" : ""
-            }
-        };
-
-    }
-else
-    {
-        var configJSON = require('../config.js');
-    }
-
+var fs = require("fs");
+const nconftest   = require("nconf");
 
 var methodMysql ;
 var conMysql ;
@@ -31,6 +13,16 @@ var MysqlPassword;
 var MysqlDatabase;
 
 var OtherMysql = false ;
+var conf_defaults = {};
+var conf_file = './config.json';
+
+if( ! fs.existsSync(conf_file) ) {
+    fs.writeFileSync( conf_file, JSON.stringify(conf_defaults,null, 2) );
+}
+
+nconftest.file('config-test', conf_file);
+nconftest.set('address','localhost');
+nconftest.set('port',1234);
 
 
 process.argv.forEach(function (val, index, array) {
@@ -47,52 +39,46 @@ process.argv.forEach(function (val, index, array) {
     {
         if(index == 5)
         {
-            MysqlAddress = val.substring(1, val.length);
-
+            nconftest.set('mysql:address', val.substring(1, val.length));
         }
         else if(index == 6)
         {
-            MysqlUsername = val.substring(1, val.length);
+            nconftest.set('mysql:username', val.substring(1, val.length));
         } 
         else if(index == 7)
         {
-            MysqlPassword = val.substring(1, val.length);
+            nconftest.set('mysql:password', val.substring(1, val.length));
         }
         else if(index == 8)
         {
-            MysqlDatabase = val.substring(1, val.length);
+            nconftest.set('mysql:database', val.substring(1, val.length));
         }
     } 
    
         
-    console.log(index + ': ' + val);
+  //Debug  console.log(index + ': ' + val);
   });
+
 
   if (OtherMysql == false)
   {
     {
-        console.log(OtherMysql);
-        MysqlAddress  = configJSON.mysql.address;
-        MysqlUsername = configJSON.mysql.username;
-        MysqlPassword = configJSON.mysql.password;
-        MysqlDatabase = configJSON.mysql.database;
-        console.log('3no : '+ MysqlAddress,MysqlUsername,MysqlPassword,MysqlDatabase);
+        MysqlAddress =  nconftest.get('mysql:address');
+        MysqlUsername = nconftest.get('mysql:username');
+        MysqlPassword = nconftest.get('mysql:password');
+        MysqlDatabase = nconftest.get('mysql:database');
     }
   }
 
 
 
-  module.exports.configJSONTest = {
-    "test" : OtherMysql,
-    "address": "localhost",
-    "port"   : "1000",
-     "mysql": {
-         "address"  : MysqlAddress,
-         "username" : MysqlUsername,
-         "password" : MysqlPassword,
-         "database" : MysqlDatabase
-     }
- };
+   //nconftest.remove('config');
+
+
+//  module.exports = { nconftest };
+
+
+  
 
 
 
@@ -114,7 +100,7 @@ describe("# Test de l'api", function () {
         
         it("Connexion MySQL - ALL GREEN", function (done) {
             this.timeout(15000); 
-            methodMysql.createMysql(MysqlAddress,MysqlUsername,MysqlPassword,MysqlDatabase, function(value) {
+            methodMysql.createMysql(nconftest.get('mysql:address'),nconftest.get('mysql:username'),nconftest.get('mysql:password'),nconftest.get('mysql:database'), function(value) {
                 if ( value.state == 'connected')
                     {
                         conMysql = value ;
@@ -163,7 +149,6 @@ describe("# Test de l'api", function () {
         it("Méthode MySQL - Identification - ALL GRREN", function (done) {
             this.timeout(15000); 
             methodMysql.signIn(conMysql,username,password, function(value) {
-                console.log(value);
                 if(value == 'OK' ) 
                       {
                         done();

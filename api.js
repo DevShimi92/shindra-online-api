@@ -2,13 +2,9 @@ var express = require('express');
 var app = express();
 var bodyParser = require("body-parser"); 
 var log4js = require('log4js');
-
-console.log(process.env.NODE_ENV );
-
-if (process.env.NODE_ENV == 'test' )
-      var configJSONTest = require('./test/apitest.js');
-else
-      var configJSON = require('./config.js');
+var fs = require("fs");
+var nconftest1 = require("nconf");
+var nconf = require("nconf");
 
 log4js.configure({
       appenders: {
@@ -37,18 +33,20 @@ app.use(bodyParser.json());
 //C'est à partir de cet objet myRouter, que nous allons implémenter les méthodes. 
 var myRouter = express.Router(); 
 
+switch (process.env.NODE_ENV) {
+      case 'test ':
+            var hostname = 'localhost'; 
+            var port = '3000'; 
+            
+          break;
+          default:
+            nconf.file('config', './config.json');
+            
+            var hostname = nconf.get('address');
+            var port = nconf.get('port');
 
-if (process.env.NODE_ENV == 'test' )
-            {
-                  var hostname = 'localhost'; 
-                  var port = '3000'; 
-            }
-      else
-            {
-                  var hostname = configJSON.address; 
-                  var port = configJSON.port; 
-            }
-
+          break;
+  };
 
 
 
@@ -175,33 +173,25 @@ app.use(myRouter);
 
 
 
-
 const server =  app.listen(port, hostname, function(){
       log.info("Mon serveur fonctionne sur http://"+ hostname +":"+port); 
-
-      if (process.env.NODE_ENV == 'test' )
+    
+      if (process.env.NODE_ENV == 'test ' )
             {
-                  console.log('A');
-                  constructorSQL.createMysql(configJSONTest.configJSONTest.mysql.address,configJSONTest.configJSONTest.mysql.username,configJSONTest.configJSONTest.mysql.password,configJSONTest.configJSONTest.mysql.database, function(value) {
+                  nconftest1.use('config-test');
+                 constructorSQL.createMysql(nconftest1.get('mysql:address'),nconftest1.get('mysql:username'),nconftest1.get('mysql:password'),nconftest1.get('mysql:database'), function(value) {
                         conMysql = value;
-                      })
+                      });
 
             }
       else
             {
-                  console.log('B');
-                  constructorSQL.createMysql(configJSON.mysql.address,configJSON.mysql.username,configJSON.mysql.password,configJSON.mysql.database, function(value) {
+                  constructorSQL.createMysql(nconf.get('mysql:address'),nconf.get('mysql:username'),nconf.get('mysql:password'),nconf.get('mysql:database'), function(value) {
                         conMysql = value;
                       })
-
-            }
+            } 
 
       
 });
 
-if (process.env.NODE_ENV == 'PRODUCTION' )
-      module.exports.configJSONTest = configJSONTest;
-
-
-module.exports.configJSON = configJSON;
 module.exports = server;
