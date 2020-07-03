@@ -27,4 +27,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm install --global mocha --save
-    - run: set NODE_ENV=test && mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}} 
+    - run: set NODE_ENV=test && mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}}
+    - uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
