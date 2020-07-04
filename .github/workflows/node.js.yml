@@ -26,7 +26,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm install --global mocha --save
-    - run: set NODE_ENV=test && mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}}
+    - run: set NODE_ENV=test && nyc  --reporter=lcov mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}}
     - uses: actions/checkout@v2
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting

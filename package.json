@@ -5,7 +5,8 @@
   "main": "serveur.js",
   "scripts": {
     "start": "node api.js",
-    "test": "mocha test/apitest.js --exit"
+    "test": "mocha test/apitest.js --exit",
+    "test-with-coverage": "nyc  --reporter=lcov mocha test/apitest.js --exit"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "log4js": "^6.2.1",
     "mysql": "^2.18.1",
     "nconf": "^0.10.0",
+    "nyc": "^15.1.0",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
