@@ -27,7 +27,7 @@ jobs:
     - run: npm install
     - run: npm install --global mocha --save
     - run: set NODE_ENV=test && ./node_modules/.bin/nyc  --reporter=text --reporter=lcov mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}}
-    - run: find lcov.info
+    - run: find / -name 'lcov.info'
     - uses: actions/checkout@v2
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
