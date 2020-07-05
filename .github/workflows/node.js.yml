@@ -23,6 +23,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Test deploy in progress
       run: npm install
       run: npm install --global mocha --save
       run: set NODE_ENV=test && ./node_modules/.bin/nyc  --reporter=text --reporter=lcov mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}}  
