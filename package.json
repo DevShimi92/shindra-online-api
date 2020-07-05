@@ -1,13 +1,14 @@
 {
-  "name": "shindra_serveur",
+  "name": "shindra_api",
   "version": "1.0.0",
-  "description": "Serveur du jeu Shindra Online",
-  "main": "serveur.js",
+  "description": "Api du jeu Shindra Online",
+  "main": "api.js",
   "scripts": {
     "start": "node api.js",
     "test": "mocha test/apitest.js --exit",
-    "test-with-coverage": "nyc  --reporter=lcov mocha test/apitest.js --exit"
-  },
+    "test-with-coverage": "nyc  --reporter=lcov mocha test/apitest.js --exit",
+    "stop" : "pkill -SIGINT SHINDRA_API"
+  },          
   "author": "",
   "license": "ISC",
   "dependencies": {
