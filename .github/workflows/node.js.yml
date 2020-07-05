@@ -35,3 +35,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Deploy to ASUSTOR server
+      uses: easingthemes/ssh-deploy@v2.0.7
+      #env:
+        #SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        #ARGS: "-rltgoDzvO"
+        #SOURCE: "dist/"
+        #REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        #REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        #TARGET: ${{ secrets.REMOTE_TARGET }}
