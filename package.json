@@ -1,7 +1,7 @@
 {
   "name": "shindra_api",
   "version": "1.0.0",
-  "description": "Api du jeu Shindra Online",
+  "description": "Api de Shindra Online",
   "main": "api.js",
   "scripts": {
     "start": "node api.js",
