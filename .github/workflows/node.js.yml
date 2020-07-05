@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Install projects
+    - name: Install module...
       run: npm install
     - name: Install Mocha in globale....
       run: npm install --global mocha --save
