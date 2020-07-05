@@ -6,8 +6,6 @@ name: Node.js CI
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   build:
@@ -24,10 +22,11 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm install --global mocha --save
-    - run: npm install --global rsync --save
-    - run: set NODE_ENV=test && ./node_modules/.bin/nyc  --reporter=text --reporter=lcov mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}}
+    - name: Test deploy in progress 
+      run: npm install
+      run: npm install --global mocha --save
+      run: npm install --global rsync --save
+      run: set NODE_ENV=test && ./node_modules/.bin/nyc  --reporter=text --reporter=lcov mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}}
     #- run: readlink -f /home/runner/work/shindra-online-api/shindra-online-api/coverage/lcov.info     
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
