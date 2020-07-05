@@ -6,6 +6,8 @@ var fs = require("fs");
 var nconftest1 = require("nconf");
 var nconf = require("nconf");
 
+process.title = "SHINDRA_API";
+
 log4js.configure({
       appenders: {
         everything: { type: 'file', filename: 'logs/all-the-logs.log' },
