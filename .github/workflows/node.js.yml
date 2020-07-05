@@ -42,7 +42,7 @@ jobs:
         host: ${{ secrets.REMOTE_HOST_ASUSTOR }}
         username: ${{ secrets.REMOTE_USER_ASUSTOR }}
         key: ${{ secrets.SSH_PRIVATE_KEY_ASUSTOR }}
-        script: cd ${{ secrets.REMOTE_TARGET_ASUSTOR }} && git fetch --all && git reset --hard && npm install && nohup npm start 
+        script: cd ${{ secrets.REMOTE_TARGET_ASUSTOR }} && git fetch --all && git reset --hard && npm install && sh test.sh
 
 
 
