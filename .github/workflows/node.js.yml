@@ -37,10 +37,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     - name: Deploy to ASUSTOR server
-      uses: easingthemes/ssh-deploy@v2.0.7
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ASUSTOR }}
-        #ARGS: "-rltgoDzvO --delete"
-        REMOTE_HOST: ${{ secrets.REMOTE_HOST_ASUSTOR }}
-        REMOTE_USER: ${{ secrets.REMOTE_USER_ASUSTOR }}
-        TARGET: ${{ secrets.REMOTE_TARGET_ASUSTOR }}
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.REMOTE_HOST_ASUSTOR }}
+        username: ${{ secrets.REMOTE_USER_ASUSTOR }}
+        key: ${{ secrets.SSH_PRIVATE_KEY_ASUSTOR }}
+        script: cd ${{ secrets.REMOTE_TARGET_ASUSTOR }} && ls
+
