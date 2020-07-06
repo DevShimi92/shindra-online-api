@@ -61,8 +61,8 @@ module.exports = {
                         }
                   else
                         {
-                              var sql = "INSERT INTO account (username, lastname,name,email,password,restpassword) VALUES ( ? )" ;
-                              var values = [username,lastname,firstname, email,password,0];
+                              var sql = "INSERT INTO account (username, lastname,firstname,email,password,restpassword,date_creation,id_user_type) VALUES ( ? )" ;
+                              var values = [username,lastname,firstname, email,password,0,new Date(),1];
                                     conMysql.query(sql, [values], function (err, result) {
                                     if (err)
                                           { 
