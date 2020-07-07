@@ -214,7 +214,7 @@ describe("# Test de l'api", function () {
             request(app)
                 .get('/')
                 .set('Accept', 'application/json')
-                .expect(200,{message: "Shindra-Online-API 07/07/2020"}, done);
+                .expect(200,{message: "Shindra-Online-API 07/07/202"}, done);
                 
         });
 

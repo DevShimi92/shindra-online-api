@@ -56,7 +56,7 @@ myRouter.route('/')
 // all permet de prendre en charge toutes les méthodes. 
 .all(function(req,res){ 
       log.info("Ping sur l'api");
-      res.status(200).json({message : "Shindra-Online-API 07/07/2020"});
+      res.status(200).json({message : "Shindra-Online-API 07/07/202"});
       res.end();
 });
  
