@@ -42,7 +42,7 @@ jobs:
         host: ${{ secrets.REMOTE_HOST_ASUSTOR }}
         username: ${{ secrets.REMOTE_USER_ASUSTOR }}
         key: ${{ secrets.SSH_PRIVATE_KEY_ASUSTOR }}
-        script: cd ${{ secrets.REMOTE_TARGET_ASUSTOR }} && git pull && npm install && sh reload.sh
+        script: cd ${{ secrets.REMOTE_TARGET_ASUSTOR }} && git fetch --all && git pull  && npm install && sh reload.sh
 
 
 
