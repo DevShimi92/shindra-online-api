@@ -44,16 +44,16 @@ module.exports = {
     },
 
     signUp: function (conMysql,lastname,firstname,email,username,password, callback) {
-        
-      conMysql.query("SELECT email from account Where email = '"+email+"'", function(err, rows) { 
+
+      conMysql.query("SELECT email from account Where email = ?",[email], function(err, rows) { 
         if(rows.length > 0 ) // Si le compte est déja existant, on renvoi bad request
               {
                  log.error("Echec de création de compte : Compte déja exsitant !");
                   callback('ERROR_EMAIL_ALREADY_EXISTS');      
               }
         else
-        {
-            conMysql.query("SELECT username from account Where username = '"+username+"'", function(err, rows) { 
+        {  
+            conMysql.query("SELECT username from account Where username = ?",[username], function(err, rows) { 
                   if(rows.length > 0 )
                         {
                               log.error("Echec de création de compte : Compte déja exsitant !");   
@@ -88,7 +88,7 @@ module.exports = {
     },
 
     signIn: function (conMysql,username,password, callback) {
-      conMysql.query("SELECT username,email,password from account Where username = '"+username+"'", function(err, rows) { 
+      conMysql.query("SELECT username,email,password from account Where username = ?",[username], function(err, rows) { 
         if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
               {
                     log.error("Echec d'identification : Le compte n'exsite pas");   
@@ -115,7 +115,7 @@ module.exports = {
 
   forgotpassword: function (conMysql,email, callback) {
         
-      conMysql.query("SELECT * from account Where email = '"+email+"'", function(err, rows) { 
+      conMysql.query("SELECT * from account Where email = ?",[email], function(err, rows) { 
         if(rows.length == 0 ) // Si le compte n'existe pas, on renvoi bad request
               {
                     log.error("Echec de rest de mot de passse : Le compte n'exsite pas.");      
@@ -123,8 +123,8 @@ module.exports = {
               }
         else      
           {
-              var sql = "UPDATE account SET password = '"+'rest'+"' WHERE email = '"+email+"'";
-                conMysql.query(sql, function (err, result) {
+              
+                conMysql.query("UPDATE account SET password = ? WHERE email = ?",['rest',email], function (err, result) {
                       if (err)
                       { 
                         log.error(err);
