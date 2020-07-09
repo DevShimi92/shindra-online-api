@@ -30,7 +30,7 @@ jobs:
     - name: Test of deploy
       run: set NODE_ENV=test && ./node_modules/.bin/nyc  --reporter=text --reporter=lcov mocha test/apitest.js --exit -paramMySQL -${{secrets.BDD_IP_TEST}} -${{secrets.BDD_USERNAME_TEST}}  -${{secrets.BDD_PASSWORD_TEST}}  -${{secrets.BDD_DATABASE_NAME_TEST}}  
       env:
-        NODE_ENV: test  
+        NODE_ENV: test   
     - name: Scan SonarCloud 
       uses: sonarsource/sonarcloud-github-action@master
       with:
