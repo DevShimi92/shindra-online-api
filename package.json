@@ -23,7 +23,14 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "jsdoc": "^3.6.4",
     "mocha": "^7.2.0",
     "supertest": "^4.0.2"
+  },
+  "apidoc":{
+    "name": "Documentation",
+    "version": "1.0.0",
+    "description": "Doc de l'api Shindra online"
+
   }
 }

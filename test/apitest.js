@@ -8,11 +8,6 @@ var conMysql ;
 var username ;
 var password ;
 var token ;
-var MysqlAddress;
-var MysqlUsername;
-var MysqlPassword;
-var MysqlDatabase;
-
 var OtherMysql = false ;
 var conf_defaults = {};
 var conf_file = './config.json';
@@ -59,16 +54,6 @@ process.argv.forEach(function (val, index, array) {
   //Debug  console.log(index + ': ' + val);
   });
 
-
-  if (OtherMysql == false)
-  {
-    {
-        MysqlAddress =  nconftest.get('mysql:address');
-        MysqlUsername = nconftest.get('mysql:username');
-        MysqlPassword = nconftest.get('mysql:password');
-        MysqlDatabase = nconftest.get('mysql:database');
-    }
-  }
 
    //nconftest.remove('config');
 
@@ -361,7 +346,7 @@ describe("# Test de l'api", function () {
                     .put('/forgotpassword')
                     .send(data)
                     .set('Accept', 'application/json')
-                    .expect(200,{ token : ""})
+                    .expect(200,{ error : ""})
                     .end((err) => {
                         if (err) return done(err);
                         done();
