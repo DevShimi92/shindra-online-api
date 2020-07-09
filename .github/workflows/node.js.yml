@@ -44,6 +44,6 @@ jobs:
         host: ${{ secrets.REMOTE_HOST_ASUSTOR }}
         username: ${{ secrets.REMOTE_USER_ASUSTOR }}
         key: ${{ secrets.SSH_PRIVATE_KEY_ASUSTOR }}
-        script: cd ${{ secrets.REMOTE_TARGET_ASUSTOR }} && git fetch --all && git pull  && npm install && sh reload.sh && ./node_modules/.bin/apidoc -e node_modules/ -i ./ -o doc/
+        script: cd ${{ secrets.REMOTE_TARGET_ASUSTOR }} && git fetch --all && git pull  && npm install && sh reload.sh
 
 
