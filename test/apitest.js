@@ -129,6 +129,17 @@ describe("# Test de l'api", function () {
               });
             
         });
+        
+        it("Méthode MySQL - Inscription - TENTATIVE D'OVERFLOW", function (done) {
+            this.timeout(15000); 
+            methodMysql.signUp('JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', function(value) {
+                if(value == 'ERROR' )
+                      {
+                        done();
+                      }                   
+              });
+
+        });
 
         it("Méthode MySQL - Identification - ALL GRREN", function (done) {
             this.timeout(15000); 
@@ -166,6 +177,17 @@ describe("# Test de l'api", function () {
 
         });
 
+        it("Méthode MySQL - Identification - TENTATIVE D'OVERFLOW", function (done) {
+            this.timeout(15000); 
+            methodMysql.signIn(conMysql,'JESUISUNEMAILTROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',password, function(value) {
+                if(value == 'ERROR' )
+                      {
+                        done();
+                      }                   
+              });
+
+        });
+
         it("Méthode MySQL - Oubli de mot de passe  - ALL GRREN ", function (done) {
             this.timeout(15000); 
             methodMysql.forgotpassword(conMysql,email, function(value) {
@@ -181,6 +203,17 @@ describe("# Test de l'api", function () {
             this.timeout(15000); 
             methodMysql.forgotpassword(conMysql,'thoerEmailfdhzeui', function(value) {
                 if(value == 'ERRORNOTFOUND' ) 
+                      {
+                        done();
+                      }                   
+              });
+
+        });
+
+        it("Méthode MySQL - Oubli de mot de passe - TENTATIVE D'OVERFLOW", function (done) {
+            this.timeout(15000); 
+            methodMysql.forgotpassword(conMysql,'JESUISUNEMAILTROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', function(value) {
+                if(value == 'ERROR' )
                       {
                         done();
                       }                   
@@ -297,6 +330,29 @@ describe("# Test de l'api", function () {
         
         });
 
+        it("Ajout de compte  - TENTATIVE D'OVERFLOW ", function (done) {
+            this.timeout(15000);
+            let data = {
+                "lastname": 'JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                "firstname": 'JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                "email":  'JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+ (Math.floor(Math.random() * (999999 - 1)) + 1 ),
+                "username": 'JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                "password": 'JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+            }
+           
+                request(app)
+                    .post('/signup')
+                    .send(data)
+                    .set('Accept', 'application/json')
+                    .expect('Content-Type', /json/)
+                    .expect(400)
+                    .end((err) => {
+                        if (err) return done(err);
+                        done();
+                    });
+        
+        });
+
         it("Identification de compte - INCOMPLETE LOGIN", function (done) {
             this.timeout(15000);
             let data = {
@@ -328,6 +384,26 @@ describe("# Test de l'api", function () {
                     .send(data)
                     .set('Accept', 'application/json')
                     .expect(400,{ error : "The account does not exist"})
+                    .end((err) => {
+                        if (err) return done(err);
+                        done();
+                    });
+                     
+                    
+        });
+
+        it("Identification de compte - TENTATIVE D'OVERFLOW", function (done) {
+            this.timeout(15000);
+            let data = {
+                "username": 'JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                "password": 'JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+            }
+           
+                request(app)
+                    .post('/signin')
+                    .send(data)
+                    .set('Accept', 'application/json')
+                    .expect(400,{ error : "ERROR"})
                     .end((err) => {
                         if (err) return done(err);
                         done();
@@ -381,6 +457,23 @@ describe("# Test de l'api", function () {
                     .send(data)
                     .set('Accept', 'application/json')
                     .expect(400,{ error : 'Missing Resources'})
+                    .end((err) => {
+                        if (err) return done(err);
+                        done();
+                    });
+        });
+
+        it("Rest de mot de passe de compte - TENTATIVE D'OVERFLOW", function (done) {
+            this.timeout(15000);
+            let data = {
+                "email": 'JESUISUNEVARIABLETROPLONGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+            }
+           
+                request(app)
+                    .put('/forgotpassword')
+                    .send(data)
+                    .set('Accept', 'application/json')
+                    .expect(400,{ error : 'Error'})
                     .end((err) => {
                         if (err) return done(err);
                         done();
