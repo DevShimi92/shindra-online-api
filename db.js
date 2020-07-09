@@ -99,7 +99,7 @@ module.exports = {
               if ( rows[0].password == password) // Si les identifiant sont correct , on envoi le tokenn
               {
                     log.info("Identification réussi pour le compte suivant  : "+ rows[0].username); 
-                    callback('OK');
+                    callback(rows[0].username);
               }
               else // Si les identifiant ne sont pas correct , on renvoi bad request
               {

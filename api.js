@@ -6,6 +6,12 @@ var fs = require("fs");
 var nconftest1 = require("nconf");
 var nconf = require("nconf");
 
+const expressJwt = require('express-jwt');
+const jwt = require('jsonwebtoken');
+const jwtRoute = require('./jwtToken');
+const errorHandler = require('./error-handler');
+
+
 process.title = "SHINDRA_API";
 
 log4js.configure({
@@ -59,6 +65,7 @@ myRouter.route('/')
       res.status(200).json({message : "Shindra-Online-API"});
       res.end();
 });
+
  
 myRouter.route('/signup') //Création d'un nouveau compte
 //POST
@@ -103,7 +110,6 @@ myRouter.route('/signin')
 //POST
 .post(function(req,res){
       log.info("Tentative d'identification...");
-
       if (req.body.username == null || req.body.password == null ) // Si il manque un champ, on renvoi bad request
       {
             res.status(400).json({error : 'Incomplete login'});
@@ -126,8 +132,23 @@ myRouter.route('/signin')
                         }
                   else     // Si les identifiant sont correct , on envoi le tokenn
                         {
-                                    res.status(200).json({token : ''});
-                                    res.end();
+                              
+                              if (process.env.NODE_ENV == 'test ' )
+                                    { 
+                                          const { secret } = { secret : nconftest1.get('secret') };
+                                          const token = jwt.sign({ username: value }, secret , { expiresIn: '2h' });
+                                          res.status(200).json({valeur : value ,token : token});
+                                          res.end();
+                              
+                                    }
+                              else
+                                    {
+                                           const { secret } = { secret : nconf.get('secret') };
+                                          const token = jwt.sign({ username: value }, secret , { expiresIn: '2h' });
+                                          res.status(200).json({valeur : value ,token : token});
+                                          res.end();
+                                      }      
+                                   
                         }               
 
             });
@@ -170,14 +191,29 @@ myRouter.route('/forgotpassword')
       }
 
 })
+
+
+
+
+
+myRouter.route('/testtoken')
+// all permet de prendre en charge toutes les méthodes. 
+.get(function(req,res){ 
+      log.info("Test token...");
+      res.status(200).json({message : "TOKEN OK"});
+      res.end()
+});
+
 // Nous demandons à l'application d'utiliser notre routeur
-app.use(myRouter);
+
+app.use(jwtRoute());
+  app.use(myRouter);
+  app.use(errorHandler);
 
 
-
+  
 const server =  app.listen(port, hostname, function(){
       log.info("Mon serveur fonctionne sur http://"+ hostname +":"+port); 
-    
       if (process.env.NODE_ENV == 'test ' )
             {
                   nconftest1.use('config-test');

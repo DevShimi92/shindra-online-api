@@ -7,6 +7,7 @@ var methodMysql ;
 var conMysql ;
 var username ;
 var password ;
+var token ;
 var MysqlAddress;
 var MysqlUsername;
 var MysqlPassword;
@@ -23,6 +24,10 @@ if( ! fs.existsSync(conf_file) ) {
 nconftest.file('config-test', conf_file);
 nconftest.set('address','localhost');
 nconftest.set('port',1234);
+if (process.env.NODE_ENV == 'test ' )
+            {
+                nconftest.set('secret','MySecretIsNotHere');
+            }
 
 
 process.argv.forEach(function (val, index, array) {
@@ -94,6 +99,7 @@ describe("# Test de l'api", function () {
         email    = 'email'+ (Math.floor(Math.random() * (999999 - 1)) + 1 );
         username = 'test'+ (Math.floor(Math.random() * (999999 - 1)) + 1);
         password = 'test';
+        token = '';
    });
 
     describe(" -- MySQL -- ", function () {
@@ -149,7 +155,7 @@ describe("# Test de l'api", function () {
         it("Méthode MySQL - Identification - ALL GRREN", function (done) {
             this.timeout(15000); 
             methodMysql.signIn(conMysql,username,password, function(value) {
-                if(value == 'OK' ) 
+                if(value == username ) 
                       {
                         done();
                       }                   
@@ -313,26 +319,6 @@ describe("# Test de l'api", function () {
         
         });
 
-        it("Identification de compte - ALL GREEN", function (done) {
-            this.timeout(15000);
-            let data = {
-                "username": username,
-                "password": password,
-            }
-           
-                request(app)
-                    .post('/signin')
-                    .send(data)
-                    .set('Accept', 'application/json')
-                    .expect(200,{token: ""})
-                    .end((err) => {
-                        if (err) return done(err);
-                        done();
-                    });
-                     
-                    
-        });
-
         it("Identification de compte - INCOMPLETE LOGIN", function (done) {
             this.timeout(15000);
             let data = {
@@ -425,9 +411,42 @@ describe("# Test de l'api", function () {
         
     
     });
- 
+    
+    describe(" -- Route de l'api avec token-- ", function () {
+
+        before(function(done) {
+            this.timeout(15000);
+            let data = {
+                    "username": username,
+                    "password": 'rest',
+                }
+            request(app)
+              .post('/signin')
+              .send(data)
+              .end(function(err, res) {
+                token = res.body.token; 
+                done();
+              });
+          });
+        
+          
+        it("Identification de compte - TOKEN OK", function (done) {
+            this.timeout(15000);
+            request(app)
+                .get('/testtoken')
+                .set({ "Authorization": `Bearer ${token}` })
+                .expect(200, done);
+        
+        });
+
+    });
 
 });
+
+
+
+
+
 
 
 

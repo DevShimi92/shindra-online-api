@@ -7,13 +7,15 @@
     "start": "node api.js",
     "test": "mocha test/apitest.js --exit",
     "test-with-coverage": "nyc  --reporter=lcov mocha test/apitest.js --exit",
-    "stop" : "pkill -SIGINT SHINDRA_API"
-  },          
+    "stop": "pkill -SIGINT SHINDRA_API"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "jsonwebtoken": "^8.5.1",
     "log4js": "^6.2.1",
     "mysql": "^2.18.1",
     "nconf": "^0.10.0",
