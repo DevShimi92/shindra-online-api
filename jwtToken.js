@@ -4,7 +4,7 @@ var nconf = require("nconf");
 module.exports = jwtRoute;
 
 function jwtRoute() {
-    if (process.env.NODE_ENV == 'test ' )
+    if (process.env.NODE_ENV == 'test' )
             {
                 console.log('B');
                   const { secret } = { "secret" : 'MySecretIsNotHere' };
