@@ -214,7 +214,7 @@ app.use(jwtRoute());
   
 const server =  app.listen(port, hostname, function(){
       log.info("Mon serveur fonctionne sur http://"+ hostname +":"+port); 
-      if (process.env.NODE_ENV == 'test ' )
+      if (process.env.NODE_ENV == 'test' )
             {
                   nconftest1.use('config-test');
                  constructorSQL.createMysql(nconftest1.get('mysql:address'),nconftest1.get('mysql:username'),nconftest1.get('mysql:password'),nconftest1.get('mysql:database'), function(value) {
