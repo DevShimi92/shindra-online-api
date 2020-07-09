@@ -6,7 +6,7 @@ module.exports = jwtRoute;
 function jwtRoute() {
     if (process.env.NODE_ENV == 'test ' )
             {
-                  const { secret } = { secret : 'MySecretIsNotHere' };
+                  const { secret } = { "secret" : 'MySecretIsNotHere' };
                   return expressJwt({ secret, algorithms: ['HS256'] }).unless({
                     path: [
                         // public routes that don't require authentication

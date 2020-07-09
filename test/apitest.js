@@ -24,11 +24,6 @@ if( ! fs.existsSync(conf_file) ) {
 nconftest.file('config-test', conf_file);
 nconftest.set('address','localhost');
 nconftest.set('port',1234);
-if (process.env.NODE_ENV == 'test ' )
-            {
-                nconftest.set('secret','MySecretIsNotHere');
-            }
-
 
 process.argv.forEach(function (val, index, array) {
     if(index == 4)
