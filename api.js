@@ -135,7 +135,7 @@ myRouter.route('/signin')
                               
                               if (process.env.NODE_ENV == 'test ' )
                                     { 
-                                          const { secret } = { secret : nconftest1.get('secret') };
+                                          const { secret } = { "secret" : 'MySecretIsNotHere' };
                                           const token = jwt.sign({ username: value }, secret , { expiresIn: '2h' });
                                           res.status(200).json({valeur : value ,token : token});
                                           res.end();
